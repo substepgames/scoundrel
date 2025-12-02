@@ -2,8 +2,8 @@
 import { Accessor, Component, For, JSX, Match, Switch, createSignal, onMount } from 'solid-js'
 import { render } from 'solid-js/web'
 import { shuffle } from './array'
-import './index.css'
 import rules from './assets/rules.txt'
+import './index.css'
 
 type State = 'started' | 'lost' | 'won'
 
@@ -72,6 +72,33 @@ const Main: Component = () => {
     onMount(() => {
         setSeed(Math.floor(Math.random() * 100_000))
         startGame()
+        document.addEventListener('keydown', e => {
+            const alternate = e.shiftKey
+            switch (e.code) {
+                case 'KeyR':
+                    startGame()
+                    break
+                case 'KeyA':
+                    avoidRoom()
+                    break
+                case 'Digit1':
+                case 'KeyH':
+                    playCard(0, alternate)
+                    break
+                case 'Digit2':
+                case 'KeyJ':
+                    playCard(1, alternate)
+                    break
+                case 'Digit3':
+                case 'KeyK':
+                    playCard(2, alternate)
+                    break
+                case 'Digit4':
+                case 'KeyL':
+                    playCard(3, alternate)
+                    break
+            }
+        })
     })
     const startGame = () => {
         const deck = createDeck()
@@ -158,6 +185,7 @@ const Main: Component = () => {
                     setActiveWeapon(undefined)
                 }
                 setActiveWeapon({ card, monsters: [] })
+                card = undefined
                 break
             }
             case 'potion': {
@@ -175,10 +203,11 @@ const Main: Component = () => {
             setState('lost')
             return
         }
+
+        const room_ = [...room()]
+        room_[i] = undefined
+        setRoom(room_)
         if (card) {
-            const room_ = [...room()]
-            room_[i] = undefined
-            setRoom(room_)
             setDiscard([...discard(), card])
         }
         if (room().filter(c => c).length === 0 && draw().length === 0) {
@@ -214,7 +243,6 @@ const Main: Component = () => {
         <div class="game">
             <header>
                 <span class="title">Scoundrel</span>
-                <span>Online version of a single player rogue-like card game</span>
             </header>
             <div class="piles">
                 <Pile pile={draw} onClick={avoidRoom} title="draw pile" />
@@ -234,40 +262,47 @@ const Main: Component = () => {
                         </For>
                     </div>
                 </div>
-                <div class="stats">
-                    <table>
-                        <tbody>
+                <table class="stats">
+                    <tbody>
+                        <tr>
+                            <td />
                             <Switch>
-                                <Match when={state() === 'won'}>victory!</Match>
-                                <Match when={state() === 'lost'}>game over!</Match>
-                                <Match when={true}>&nbsp</Match>
+                                <Match when={state() === 'won'}>
+                                    <td class="weapon">victory!</td>
+                                </Match>
+                                <Match when={state() === 'lost'}>
+                                    <td class="monster">game over!</td>
+                                </Match>
+                                <Match when={true}>
+                                    <td>&nbsp</td>
+                                </Match>
                             </Switch>
-                            <tr>
-                                <td>health:</td>
-                                <td classList={{ low: health() <= 5 }}>{health()}</td>
-                            </tr>
-                            <tr>
-                                <td>score:</td>
-                                <Switch>
-                                    <Match when={state() === 'started'}>
-                                        <td class="score">
-                                            {score().lost}/{score().won}
-                                        </td>
-                                    </Match>
-                                    <Match when={true}>
-                                        <td class="score" title="won/lost score">
-                                            {state() === 'won' ? score().won : score().lost}
-                                        </td>
-                                    </Match>
-                                </Switch>
-                            </tr>
-                            <tr>
-                                <td>seed:</td>
-                                <td>{seed()}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        </tr>
+                        <tr>
+                            <td>health:</td>
+                            <td classList={{ low: health() <= 5 }}>{health()}</td>
+                        </tr>
+                        <tr>
+                            <td>score:</td>
+                            <Switch>
+                                <Match when={state() === 'started'}>
+                                    <td class="score">
+                                        {score().lost}/{score().won}
+                                    </td>
+                                </Match>
+                                <Match when={true}>
+                                    <td class="score" title="won/lost score">
+                                        {state() === 'won' ? score().won : score().lost}
+                                    </td>
+                                </Match>
+                            </Switch>
+                        </tr>
+                        <tr>
+                            <td>seed:</td>
+                            <td>{seed()}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <footer>
                 <div class="controls">
@@ -289,6 +324,8 @@ const Main: Component = () => {
                     </span>
                 </div>
                 <div class="credits">
+                    <span>Online version of a single</span>
+                    <span>player rogue-like card game</span>
                     <span>
                         design by <a href="http://stfj.net/">Zach Gage</a> and{' '}
                         <a href="https://www.kurtiswow.com/">Kurt Bieg</a>
@@ -299,6 +336,9 @@ const Main: Component = () => {
                     <span>
                         <a href={rules}>rules</a> (<a href="http://stfj.net/art/2011/Scoundrel.pdf">original</a>,{' '}
                         <a href="https://youtu.be/Gt2tYzM93h4">video</a>)
+                    </span>
+                    <span>
+                        <a href="https://github.com/substepgames/scoundrel">source</a>
                     </span>
                 </div>
             </footer>
