@@ -31,7 +31,7 @@ type ActiveWeapon = {
 
 type CardProps = {
     card?: Card
-} & JSX.HTMLAttributes<HTMLButtonElement>
+} & JSX.ButtonHTMLAttributes<HTMLButtonElement>
 const CardComponent: Component<CardProps> = (props: CardProps) => {
     return (
         <Switch>
@@ -50,7 +50,7 @@ const CardComponent: Component<CardProps> = (props: CardProps) => {
 
 type PileProps = {
     pile: Accessor<Card[]>
-} & JSX.HTMLAttributes<HTMLButtonElement>
+} & JSX.ButtonHTMLAttributes<HTMLButtonElement>
 const Pile: Component<PileProps> = (props: PileProps) => {
     return (
         <button type="button" class="pile" {...props} classList={{ empty: props.pile().length === 0 }}>
@@ -68,7 +68,6 @@ const Main: Component = () => {
     const [health, setHealth] = createSignal(20)
     const [lastRoomAvoided, setLastRoomAvoided] = createSignal(false)
     const [activeWeapon, setActiveWeapon] = createSignal<ActiveWeapon | undefined>()
-    const [score, setScore] = createSignal(0)
     onMount(() => {
         setSeed(Math.floor(Math.random() * 100_000))
         startGame()
@@ -83,7 +82,6 @@ const Main: Component = () => {
         setHealth(20)
         setLastRoomAvoided(false)
         setActiveWeapon(undefined)
-        setScore(0)
 
         setState('started')
         startTurn()
@@ -167,16 +165,15 @@ const Main: Component = () => {
             }
         }
 
+        if (health() <= 0) {
+            setState('lost')
+            return
+        }
         if (card) {
             const room_ = [...room()]
             room_[i] = undefined
             setRoom(room_)
             setDiscard([...discard(), card])
-        }
-
-        if (health() <= 0) {
-            setState('lost')
-            return
         }
         if (room().filter(c => c).length === 0 && draw().length === 0) {
             setState('won')
@@ -187,11 +184,32 @@ const Main: Component = () => {
             startTurn()
         }
     }
+    const score = (): { won?: number; lost?: number } => {
+        const health_ = health()
+        const draw_ = draw()
+        const room_ = room()
+        // TODO: count last potion card
+        const won = health_
+        const lost =
+            health_ -
+            [...draw_, ...room_]
+                .filter(c => c?.type === 'monster')
+                .map(c => c!.value)
+                .reduce((a, b) => a + b, 0)
+        switch (state()) {
+            case 'started':
+                return { won, lost }
+            case 'lost':
+                return { lost }
+            case 'won':
+                return { won }
+        }
+    }
     return (
         <div class="game">
             <div class="piles">
                 <Pile pile={draw} onClick={avoidRoom} />
-                <Pile pile={discard} />
+                <Pile pile={discard} disabled />
             </div>
             <div class="room">
                 <For each={room()}>
@@ -214,7 +232,14 @@ const Main: Component = () => {
                     </tr>
                     <tr>
                         <td>score:</td>
-                        <td>{score()}</td>
+                        <td>
+                            <Switch>
+                                <Match when={state() === 'started'}>
+                                    {score().lost}/{score().won}
+                                </Match>
+                                <Match when={true}>{state() === 'won' ? score().won : score().lost}</Match>
+                            </Switch>
+                        </td>
                     </tr>
                     <tr>
                         <td>seed:</td>

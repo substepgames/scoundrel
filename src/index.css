@@ -208,7 +208,6 @@ select {
         width: fit-content;
 
         td:last-child {
-            padding-left: 1ch;
             text-align: right;
         }
     }
