@@ -225,7 +225,7 @@ select {
             }
 
             .score {
-                min-width: 6ch;
+                min-width: 7ch;
             }
         }
     }

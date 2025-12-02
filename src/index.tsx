@@ -102,6 +102,9 @@ const Main: Component = () => {
                 case 'KeyL':
                     playCard(3, alternate)
                     break
+                case 'KeyB':
+                    setBarehandMode(!barehandMode())
+                    break
             }
         })
     })
@@ -156,31 +159,25 @@ const Main: Component = () => {
 
         switch (card.type) {
             case 'monster': {
-                if (alternative || barehandMode()) {
+                const activeWeapon_ = activeWeapon()
+                if (alternative || barehandMode() || !activeWeapon_) {
                     // barehanded
                     setHealth(health() - card.value)
                     setBarehandMode(false)
                 } else {
-                    // with weapon
-                    const activeWeapon_ = activeWeapon()
-                    if (activeWeapon_) {
-                        const limit = activeWeapon_.monsters.at(-1)?.value ?? Number.POSITIVE_INFINITY
-                        if (card.value < limit) {
-                            const dmg = Math.max(0, card.value - activeWeapon_.card.value)
-                            setHealth(health() - dmg)
-                            activeWeapon_.monsters.push(card)
-                            setActiveWeapon({ ...activeWeapon_ })
+                    const limit = activeWeapon_.monsters.at(-1)?.value ?? Number.POSITIVE_INFINITY
+                    if (card.value < limit) {
+                        const dmg = Math.max(0, card.value - activeWeapon_.card.value)
+                        setHealth(health() - dmg)
+                        activeWeapon_.monsters.push(card)
+                        setActiveWeapon({ ...activeWeapon_ })
 
-                            const room_ = [...room()]
-                            room_[i] = undefined
-                            setRoom(room_)
-                            card = undefined
-                        } else {
-                            alert('last slain monster was too weak')
-                            return
-                        }
+                        const room_ = [...room()]
+                        room_[i] = undefined
+                        setRoom(room_)
+                        card = undefined
                     } else {
-                        alert('no weapon equipped')
+                        alert('stronger than the last slain monster')
                         return
                     }
                 }
@@ -334,6 +331,9 @@ const Main: Component = () => {
                     </span>
                     <span>
                         play+<pre>Shift</pre> barehand
+                    </span>
+                    <span>
+                        <pre>B</pre> toggle barehand
                     </span>
                 </div>
                 <div class="credits">
