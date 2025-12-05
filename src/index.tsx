@@ -379,14 +379,14 @@ const Main: Component = () => {
                     <span>Online version of a single</span>
                     <span>player rogue-like card game</span>
                     <span>
-                        design by <a href="http://stfj.net/">Zach Gage</a> and{' '}
+                        design by <a href="https://stfj.net/">Zach Gage</a> and{' '}
                         <a href="https://www.kurtiswow.com/">Kurt Bieg</a>
                     </span>
                     <span>
-                        implementation by <a href="http://substepgames.com/">Substep Games</a>
+                        implementation by <a href="https://substepgames.com/">Substep Games</a>
                     </span>
                     <span>
-                        <a href={rules}>rules</a> (<a href="http://stfj.net/art/2011/Scoundrel.pdf">original</a>,{' '}
+                        <a href={rules}>rules</a> (<a href="https://stfj.net/art/2011/Scoundrel.pdf">original</a>,{' '}
                         <a href="https://youtu.be/Gt2tYzM93h4">video</a>)
                     </span>
                     <span>
