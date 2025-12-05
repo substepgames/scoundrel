@@ -271,47 +271,42 @@ const Main: Component = () => {
                         </For>
                     </div>
                 </div>
-                <table class="stats">
-                    <tbody>
-                        <tr>
-                            <td />
-                            <Switch>
-                                <Match when={state() === 'won'}>
-                                    <td class="weapon">victory!</td>
-                                </Match>
-                                <Match when={state() === 'lost'}>
-                                    <td class="monster">game over!</td>
-                                </Match>
-                                <Match when={true}>
-                                    <td>&nbsp</td>
-                                </Match>
-                            </Switch>
-                        </tr>
-                        <tr>
-                            <td>health:</td>
-                            <td classList={{ low: health() <= 5 }}>{health()}</td>
-                        </tr>
-                        <tr>
-                            <td>score:</td>
-                            <Switch>
-                                <Match when={state() === 'started'}>
-                                    <td class="score">
-                                        {score().lost}/{score().won}
-                                    </td>
-                                </Match>
-                                <Match when={true}>
-                                    <td class="score" title="won/lost score">
-                                        {state() === 'won' ? score().won : score().lost}
-                                    </td>
-                                </Match>
-                            </Switch>
-                        </tr>
-                        <tr>
-                            <td>seed:</td>
-                            <td>{seed()}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="stats">
+                    <p class="stat">
+                        <Switch>
+                            <Match when={state() === 'won'}>
+                                <span class="weapon">victory!</span>
+                            </Match>
+                            <Match when={state() === 'lost'}>
+                                <span class="monster">game over!</span>
+                            </Match>
+                            <Match when={true}>
+                                <span>&nbsp</span>
+                            </Match>
+                        </Switch>
+                    </p>
+                    <p class="stat">
+                        <label>health:</label>
+                        <span classList={{ low: health() <= 5 }}>{health()}</span>
+                    </p>
+                    <p class="stat">
+                        <label>score:</label>
+                        <Switch>
+                            <Match when={state() === 'started'}>
+                                <span>
+                                    {score().lost}/{score().won}
+                                </span>
+                            </Match>
+                            <Match when={true}>
+                                <span title="won/lost score">{state() === 'won' ? score().won : score().lost}</span>
+                            </Match>
+                        </Switch>
+                    </p>
+                    <p class="stat">
+                        <label>seed:</label>
+                        <span>{seed()}</span>
+                    </p>
+                </div>
             </div>
             <footer>
                 <div class="controls">

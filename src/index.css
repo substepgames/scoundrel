@@ -212,20 +212,20 @@ select {
         }
 
         .stats {
+            display: flex;
+            flex-direction: column;
             align-self: flex-end;
-            height: fit-content;
             font-size: .8rem;
 
-            td {
-                padding: 0;
+            .stat {
+                display: flex;
+                justify-content: flex-end;
 
-                &:last-child {
+                span {
+                    display: inline-block;
+                    min-width: 7ch;
                     text-align: right;
                 }
-            }
-
-            .score {
-                min-width: 7ch;
             }
         }
     }
@@ -260,7 +260,7 @@ select {
         }
     }
 
-    .card, .stats td {
+    .card, .stat span {
         &.monster {
             color: var(--monster);
         }
