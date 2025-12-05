@@ -268,7 +268,7 @@ const Main: Component = () => {
                     <CardComponent card={activeWeapon()?.card} disabled title="equipped weapon" />
                     <div class="slain">
                         <For each={activeWeapon()?.monsters}>
-                            {(monster, i) => <CardComponent card={monster} style={{ left: `${i() * 2}rem` }} />}
+                            {(monster, i) => <CardComponent card={monster} style={{ left: `${0.5 * i()}rem` }} />}
                         </For>
                     </div>
                 </div>
